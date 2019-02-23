@@ -3,4 +3,4 @@ Cloud test is planned to be an extendable integration tester that provides its r
 
 ## Proposed frameworks
 - Python -> v3.7.2
-- React
+- Vue.js
