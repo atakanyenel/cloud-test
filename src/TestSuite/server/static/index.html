@@ -1,1 +1,69 @@
-<h1>SELAM</h1>
+<head>
+    <title>Cloud test Suite</title>
+
+</head>
+
+<body>
+
+    <h1>Cloud Test Suite</h1>
+    <div id="app">
+        <ol>
+            <test-item v-for="test in tests" v-bind:test="test"></test-item>
+        </ol>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script>
+        data = {
+            results: [
+                {
+                    name: "TestAdd",
+                    status: "Running"
+                },
+                {
+                    name: "TestSubtract",
+                    status: "Passed"
+                }
+            ]
+        }
+
+        Vue.component("test-item", {
+            props: ["test"],
+
+            methods: {
+                setColor: function (test) {
+                    bg = test.status == "Passed" ? "green" : "yellow"
+
+                    return bg
+                }
+            },
+
+            template: '<li v-bind:class="setColor(test)">{{test.name}} -> {{test.status}}</li>',
+
+        })
+
+        var app = new Vue({
+            el: "#app",
+            data: {
+                tests: data.results
+            }
+        })
+
+
+    </script>
+    <style>
+        .green {
+            color: green
+        }
+
+        .yellow {
+            color: yellowgreen
+        }
+
+        .red {
+            color: red
+        }
+    </style>
+</body>

@@ -13,7 +13,7 @@ def index():
 def hello():
     results = []
     for t in TestSuite.getTests():
-        results.append(t.__str__())
+        results.append({"name": t.name, "status": t.status})
     return jsonify(results=results)
 
 
