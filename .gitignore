@@ -7,3 +7,4 @@ venv
 # MacOS stuff
 .DS_Store
 .mypy_cache
+__pycache__
