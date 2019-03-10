@@ -18,6 +18,12 @@ def TestSubtract():
     assert (System.subtract(-1000, -1000) == 0)
 
 
+@TestSuite.test
+def TestFail():
+    sleep(5)
+    assert (1 == 2)
+
+
 print(*TestSuite.getTests(), sep="\n")
 
 TestSuite.run()

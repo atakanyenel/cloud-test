@@ -14,56 +14,80 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <script>
-        data = {
-            results: [
-                {
-                    name: "TestAdd",
-                    status: "Running"
-                },
-                {
-                    name: "TestSubtract",
-                    status: "Passed"
-                }
-            ]
+        /* from TestSuite.py
+        WAITING = "Queued"
+        RUNNING = "Running"
+        SKIP = "Skipped"
+        PASS = "Passed"
+        FAIL = "Failed"
+        */
+        const statusToClass = {
+            "Running": "is-primary",
+            "Passed": "is-success",
+            "Failed": "is-error",
+            "Skipped": "is-warning"
         }
-
         Vue.component("test-item", {
             props: ["test"],
 
             methods: {
                 setColor: function (test) {
-                    bg = test.status == "Passed" ? "green" : "yellow"
-
-                    return bg
+                    return statusToClass[test.status]
                 }
             },
 
-            template: '<li v-bind:class="setColor(test)">{{test.name}} -> {{test.status}}</li>',
+            template: '<li class="nes-text" v-bind:class="setColor(test)">{{test.name}} -> {{test.status}} in {{Math.floor(test.elapsed)}} seconds</li>',
 
         })
 
         var app = new Vue({
             el: "#app",
-            data: {
-                tests: data.results
+            data() {
+                return {
+                    tests: null
+                }
+            },
+            methods: {
+                refreshTests: function () {
+                    axios.get("/tests").then(
+                        response => {
+                            console.log(response.data)
+                            this.tests = response.data.results;
+                        })
+                }
+            },
+            mounted: function () {
+                this.refreshTests();
+
+                var myInterval = setInterval(function () {
+                    var result = this.tests.filter(test => {
+                        return test.status == "Running" || test.status == "Queued"
+                    })
+
+                    result == 0 ? clearInterval(myInterval) : this.refreshTests(); //stop pooling  if all tests resulted
+
+
+                }.bind(this), 1000); // 1 seconds
+
+
             }
         })
 
 
     </script>
     <style>
-        .green {
-            color: green
-        }
-
-        .yellow {
-            color: yellowgreen
-        }
-
-        .red {
-            color: red
+        body {
+            margin: 50px auto;
+            max-width: 1000px;
+            line-height: 1.6;
+            text-align: center;
+            font-size: 18px;
+            color: #444;
+            padding: 0 10px;
         }
     </style>
 </body>

@@ -1,6 +1,7 @@
 import logging
 from .server import server
 from threading import Thread
+import time
 _Tests = []
 
 
@@ -14,7 +15,7 @@ def run():
     print("Test Suite runner called")
     thread = Thread(target=server.start)  # Python threads
     thread.start()
-    for t in _Tests:  # TODO: do we want to run parallel or not
+    for t in _Tests:
         thread = Thread(target=t.run).start()
 
 
@@ -33,15 +34,14 @@ class _Test():
         self.function = function
         self.name = function.__name__
         self.status = self.WAITING
-
-    def __str__(self):
-        return "%s : %s" % (self.name, self.status)
+        self.elapsed = 0
 
     def __repr__(self):
-        return self.__str__
+        return f"{self.name} : {self.status}  in {self.elapsed:.4f}"
 
     def run(self):
         self.status = self.RUNNING
+        start_time = time.perf_counter()
         try:
             self.function()
             self.status = self.PASS
@@ -49,3 +49,6 @@ class _Test():
             logging.error(
                 "There is an error in test:", exc_info=True)
             self.status = self.FAIL
+        finally:
+            end_time = time.perf_counter()
+            self.elapsed = end_time-start_time
