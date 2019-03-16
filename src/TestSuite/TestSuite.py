@@ -10,13 +10,23 @@ def test(func):
     _Tests.append(_Test(func))
 
 
+def rerun():
+    global _Tests
+    _Tests = [_Test(t.function) for t in _Tests]
+    runTests()
+
+
+def runTests():
+    for t in _Tests:
+        Thread(target=t.run).start()
+
+
 def run():
     """Run the test suite"""
     print("Test Suite runner called")
     thread = Thread(target=server.start)  # Python threads
     thread.start()
-    for t in _Tests:
-        thread = Thread(target=t.run).start()
+    runTests()
 
 
 def getTests():

@@ -11,11 +11,21 @@ def index():
 
 @app.route("/tests")
 def hello():
+    return jsonify(results=getTests())
+
+
+@app.route("/rerun", methods=["POST"])
+def rerun():
+    TestSuite.rerun()
+    return jsonify(results=getTests())
+
+
+def getTests():
     results = []
     for t in TestSuite.getTests():
-        results.append(
-            {"name": t.name, "status": t.status, "elapsed": t.elapsed})
-    return jsonify(results=results)
+        results.append({
+            "name": t.name, "status": t.status, "elapsed": t.elapsed})
+    return results
 
 
 def start():
